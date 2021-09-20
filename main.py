@@ -1,6 +1,7 @@
 # coding: UTF-8
 from PIL import Image, ImageTk
 
+from modules import Ocr
 import tkinter
 import time
 import pyautogui
@@ -56,12 +57,10 @@ class app(tkinter.Frame):
     start_x, start_y, end_x, end_y = [
       round(n * app.RESIZE_RETIO) for n in view_screenshot_canvas.coords("rect1")
     ]
-
-    # 取得した座標を表示
-    # TODO: ここ消す
-    pyautogui.alert("start_x : " + str(start_x) + "\n" + "start_y : " +
-                    str(start_y) + "\n" + "end_x : " + str(end_x) + "\n" +
-                    "end_y : " + str(end_y))
+    width  = end_x - start_x
+    height = end_y - start_y
+    img = pyautogui.screenshot(region=(start_x, start_y, width, height))
+    Ocr.get_text(img)
     
   # ドラッグ中のマウスポインタが領域外の場合はtrue
   def __is_out_of_area_mouse_pointer(mouse_pointer):
@@ -75,6 +74,8 @@ class app(tkinter.Frame):
 
     # Canvasウィジェットの描画
     global view_screenshot_canvas
+    # すでにウィジェットを配置している場合は削除する
+    if 'view_screenshot_canvas' in globals(): view_screenshot_canvas.destroy()
     view_screenshot_canvas = tkinter.Canvas(root,
                              bg="green",
                              width=image.width,
@@ -94,7 +95,7 @@ class app(tkinter.Frame):
 if __name__ == "__main__":
   root = tkinter.Tk()
   # フォーム
-  root.title("すぐぐる")
+  root.title("文字列取得")
   root.geometry("500x700")
 
   label = tkinter.Label(root, text="")
@@ -103,7 +104,7 @@ if __name__ == "__main__":
   frame = tkinter.Frame(root)
   frame.pack(fill = tkinter.BOTH)
   button = tkinter.Button(frame, 
-                          text="ボタン", 
+                          text="スクリーンショット", 
                           command=app.click_screenshot_button, 
                           bg='#f0e68c', 
                           height=2, 
