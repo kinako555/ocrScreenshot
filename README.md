@@ -15,3 +15,6 @@ pip install Pillow
 conda install -c conda-forge tesseract
 conda install -c conda-forge pyocr
 ```
+
+## 注意点
+英語しか対応していません
